@@ -20,8 +20,8 @@ namespace WebAPI.Controllers
         [Route("add")]
         public IActionResult Add(BookCreatDto book)
         {
-            _booksServcie.Add(book);
-            return Ok(book);
+            var data = _booksServcie.Add(book);
+            return Ok(data);
         }
 
         [HttpGet("getAll")]

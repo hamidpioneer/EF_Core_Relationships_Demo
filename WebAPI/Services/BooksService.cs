@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using WebAPI.Data;
@@ -15,7 +16,7 @@ namespace WebAPI.Services
             _context = context;
         }
 
-        public void Add(BookCreatDto newBookDto)
+        public Book Add(BookCreatDto newBookDto)
         {
             Book newBook = new Book()
             {
@@ -25,15 +26,65 @@ namespace WebAPI.Services
                 DateRead = newBookDto.isRead ? newBookDto.DateRead : null,
                 Rate = newBookDto.isRead ? newBookDto.Rate.Value : null,
                 Genre = newBookDto.Genre,
-                Author = newBookDto.Author,
+                //Author = newBookDto.Author,
                 CoverUrl = newBookDto.CoverUrl,
-                DateAdded = DateTime.Now
+                DateAdded = DateTime.Now,
+                PublisherId = newBookDto.PublisherId
             };
             _context.Books.Add(newBook);
             _context.SaveChanges();
+
+            var book_Authors = new List<Book_Author>();
+            foreach (var authorId in newBookDto.AuthorIds)
+            {
+                var book_Author = new Book_Author()
+                {
+                    BookId = newBook.Id,
+                    AuthorId = authorId
+                };
+
+                book_Authors.Add(book_Author);
+            }
+            _context.Book_Authors.AddRange(book_Authors);
+            _context.SaveChanges();
+
+            return newBook;
         }
 
-        public IList<BookReadDto> GetAll()
+        /*public void Add(BookCreatDto newBookDto)
+        {
+            Book newBook = new Book()
+            {
+                Title = newBookDto.Title,
+                Description = newBookDto.Description,
+                isRead = newBookDto.isRead,
+                DateRead = newBookDto.isRead ? newBookDto.DateRead : null,
+                Rate = newBookDto.isRead ? newBookDto.Rate.Value : null,
+                Genre = newBookDto.Genre,
+                //Author = newBookDto.Author,
+                CoverUrl = newBookDto.CoverUrl,
+                DateAdded = DateTime.Now,
+                PublisherId = newBookDto.PublisherId
+            };
+            _context.Books.Add(newBook);
+            _context.SaveChanges();
+
+            var book_Authors = new List<Book_Author>();
+            foreach(var authorId in newBookDto.Authors)
+            {
+                var book_Author = new Book_Author()
+                {
+                    BookId = newBook.Id,
+                    AuthorId = authorId
+                };
+
+                book_Authors.Add(book_Author);
+            }
+            _context.Book_Authors.AddRange(book_Authors);
+            _context.SaveChanges();
+        }*/
+
+        /*public IList<BookReadDto> GetAll()
         {
             IList<BookReadDto> allBooks = _context.Books.Select(book => new BookReadDto {
                 Id = book.Id,
@@ -49,8 +100,14 @@ namespace WebAPI.Services
             }).ToList();
 
             return allBooks;
-        }
+        }*/
 
+        public IList<Book> GetAll()
+        {
+            IList<Book> allBooks = _context.Books.Include(b=>b.Book_Authors).ToList();
+
+            return allBooks;
+        }
         public BookReadDto GetById(int bookId)
         {
             BookReadDto bookFromDb = _context.Books
@@ -63,7 +120,7 @@ namespace WebAPI.Services
                     DateRead = book.DateAdded,
                     Rate = book.Rate.Value,
                     Genre = book.Genre,
-                    Author = book.Author,
+                    //Author = book.Author,
                     CoverUrl = book.CoverUrl,
                     ThanksNote = "Thanks for Retriving"
                 })
@@ -83,8 +140,9 @@ namespace WebAPI.Services
                 existedBook.DateRead = bookCreatDto.DateRead;
                 existedBook.Rate = bookCreatDto.Rate;
                 existedBook.Genre = bookCreatDto.Genre;
-                existedBook.Author = bookCreatDto.Author;
+                //existedBook.Author = bookCreatDto.Author;
                 existedBook.CoverUrl = bookCreatDto.CoverUrl;
+                existedBook.PublisherId = bookCreatDto.PublisherId;
 
                 _context.Books.Update(existedBook);
                 _context.SaveChanges();
@@ -98,7 +156,7 @@ namespace WebAPI.Services
                     DateRead = bookCreatDto.isRead ? bookCreatDto.DateRead : null,
                     Rate = bookCreatDto.isRead ? bookCreatDto.Rate.Value : null,
                     Genre = bookCreatDto.Genre,
-                    Author = bookCreatDto.Author,
+                    //Author = bookCreatDto.Author,
                     CoverUrl = bookCreatDto.CoverUrl,
                     ThanksNote = "Thanks for update!"
                 };

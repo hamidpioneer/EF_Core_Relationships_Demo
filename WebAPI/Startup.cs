@@ -34,6 +34,8 @@ namespace WebAPI
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(ConnectionString));
 
             services.AddScoped<BooksService>();
+            services.AddScoped<PublishersService>();
+            services.AddScoped<AuthorsService>();
 
             services.AddControllers();            
 
@@ -64,7 +66,7 @@ namespace WebAPI
                 endpoints.MapControllers();
             });
 
-            AppDbInitializer.seed(app);
+            //AppDbInitializer.seed(app);
         }
     }
 }

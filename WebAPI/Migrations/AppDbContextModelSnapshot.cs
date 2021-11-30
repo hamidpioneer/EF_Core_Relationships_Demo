@@ -19,15 +19,27 @@ namespace WebAPI.Migrations
                 .HasAnnotation("ProductVersion", "5.0.12")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("WebAPI.Data.Models.Book", b =>
+            modelBuilder.Entity("WebAPI.Data.Models.Author", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Author")
+                    b.Property<string>("FullName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Authors");
+                });
+
+            modelBuilder.Entity("WebAPI.Data.Models.Book", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("CoverUrl")
                         .HasColumnType("nvarchar(max)");
@@ -63,6 +75,28 @@ namespace WebAPI.Migrations
                     b.ToTable("Books");
                 });
 
+            modelBuilder.Entity("WebAPI.Data.Models.Book_Author", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("Book_Authors");
+                });
+
             modelBuilder.Entity("WebAPI.Data.Models.Publisher", b =>
                 {
                     b.Property<int>("Id")
@@ -75,7 +109,7 @@ namespace WebAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Publisher");
+                    b.ToTable("Publishers");
                 });
 
             modelBuilder.Entity("WebAPI.Data.Models.Book", b =>
@@ -87,6 +121,35 @@ namespace WebAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Publisher");
+                });
+
+            modelBuilder.Entity("WebAPI.Data.Models.Book_Author", b =>
+                {
+                    b.HasOne("WebAPI.Data.Models.Author", "Author")
+                        .WithMany("Book_Authors")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebAPI.Data.Models.Book", "Book")
+                        .WithMany("Book_Authors")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("WebAPI.Data.Models.Author", b =>
+                {
+                    b.Navigation("Book_Authors");
+                });
+
+            modelBuilder.Entity("WebAPI.Data.Models.Book", b =>
+                {
+                    b.Navigation("Book_Authors");
                 });
 
             modelBuilder.Entity("WebAPI.Data.Models.Publisher", b =>
