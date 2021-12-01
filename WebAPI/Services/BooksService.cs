@@ -16,7 +16,7 @@ namespace WebAPI.Services
             _context = context;
         }
 
-        public Book Add(BookCreatDto newBookDto)
+        public Book Add(BookCreateDto newBookDto)
         {
             Book newBook = new Book()
             {
@@ -151,7 +151,7 @@ namespace WebAPI.Services
             return bookFromDb;
         }
         
-        public BookReadDto UpdateById(int bookId, BookCreatDto bookCreatDto)
+        public BookReadDto UpdateById(int bookId, BookCreateDto bookCreatDto)
         {
             var existedBook = _context.Books.FirstOrDefault(b => b.Id==bookId);
             if (existedBook != null)

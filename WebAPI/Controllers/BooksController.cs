@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
 
         [HttpPost]
         [Route("add")]
-        public IActionResult Add(BookCreatDto book)
+        public IActionResult Add(BookCreateDto book)
         {
             var data = _booksServcie.Add(book);
             return Ok(data);
@@ -40,7 +40,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("update/{bookId}")]
-        public IActionResult UpdateById(int bookId, [FromBody] BookCreatDto book)
+        public IActionResult UpdateById(int bookId, [FromBody] BookCreateDto book)
         {
             BookReadDto updatedBook = _booksServcie.UpdateById(bookId, book);
             

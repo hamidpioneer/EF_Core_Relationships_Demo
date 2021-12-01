@@ -4,7 +4,7 @@ using WebAPI.Data.Models;
 
 namespace WebAPI.Data.Dtos
 {
-    public class BookCreatDto
+    public class BookCreateDto
     {
         public string Title { get; set; }
         public string Description { get; set; }
