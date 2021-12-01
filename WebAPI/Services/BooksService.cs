@@ -102,12 +102,34 @@ namespace WebAPI.Services
             return allBooks;
         }*/
 
-        public IList<Book> GetAll()
+
+
+        public IList<BookReadDto> GetAll()
+        {
+            IList<BookReadDto> allBooks = _context.Books.Select(book => new BookReadDto
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Description = book.Description,
+                isRead = book.isRead,
+                DateRead = book.DateRead,
+                Rate = book.Rate,
+                Genre = book.Genre,
+                CoverUrl = book.CoverUrl,
+                PublisherName = book.Publisher.Name,
+                AuthorNames = book.Book_Authors.Select(ba=>ba.Author.FullName).ToList(),
+                ThanksNote = "Thanks for Retreiving!"
+            }).ToList();
+
+            return allBooks;
+        }
+
+        /*public IList<Book> GetAll()
         {
             IList<Book> allBooks = _context.Books.Include(b=>b.Book_Authors).ToList();
 
             return allBooks;
-        }
+        }*/
         public BookReadDto GetById(int bookId)
         {
             BookReadDto bookFromDb = _context.Books
